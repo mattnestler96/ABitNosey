@@ -1,0 +1,27 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-abitnosey-staging-230751-authRole",
+      "UnauthRoleArn": "arn:aws:iam::172885992056:role/amplify-abitnosey-staging-230751-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::172885992056:role/amplify-abitnosey-staging-230751-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-abitnosey-staging-230751-deployment",
+      "UnauthRoleName": "amplify-abitnosey-staging-230751-unauthRole",
+      "StackName": "amplify-abitnosey-staging-230751",
+      "StackId": "arn:aws:cloudformation:us-east-1:172885992056:stack/amplify-abitnosey-staging-230751/044d87a0-5583-11ed-bd71-0e14ea7591df",
+      "AmplifyAppId": "d1vanofjg0ducr"
+    },
+    "categories": {
+      "api": {
+        "ABitNosey": {}
+      },
+      "auth": {
+        "abitnosey6eaa90c7": {}
+      },
+      "geo": {
+        "map0db5cfba": {},
+        "placeindex9106987c": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+type ZORI @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  RegionName: String @index(name: "RegionName-index", queryField: "ZORIByRegionName")
+  City: String
+  State: String
+  Metro: String
+  SizeRank: String
+  Value: String
+  CountyName: String
+}
+
+type ZHVI @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  RegionName: String @index(name: "RegionName-index", queryField: "ZHVIByRegionName")
+  City: String
+  State: String
+  Metro: String
+  SizeRank: Int
+  Value: Float
+  CountyName: String
+} 
