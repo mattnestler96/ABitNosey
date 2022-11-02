@@ -5,7 +5,7 @@ import { Place } from '@aws-amplify/geo'
 import awsconfig from './aws-exports';
 import { Authenticator, MapView, LocationSearch } from "@aws-amplify/ui-react";
 import '@aws-amplify/ui-react/styles.css';
-import { ViewState } from 'react-map-gl';
+import { ViewState, Marker } from 'react-map-gl';
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js'
 import { omit } from 'lodash'
@@ -21,17 +21,18 @@ const currency = (value: number | string): string => {
   return `$${(Math.round((num as number) * 100) / 100).toLocaleString()}`
 }
 
+type IViewState = Pick<ViewState, 'latitude' | 'longitude'>
+
 function App() {
 
-  const [initialViewState, setInitialViewState] = React.useState<Partial<ViewState> | undefined>()
+  const [viewState, setViewState] = React.useState<IViewState>({ latitude: 32.7, longitude: -117.1 })
   const getInitialLocation = () => {
     navigator.geolocation.getCurrentPosition(function(position) {
       const {latitude, longitude} = position.coords
-      const viewState = {latitude, longitude, zoom: 9} as ViewState
-      setInitialViewState(viewState)
-      handleMove({ viewState })
+      const newViewState = {latitude, longitude, zoom: 9} as ViewState
+      handleMove({ viewState: newViewState })
     },
-    () => setInitialViewState({}));
+    () => handleMove({ viewState }))
   }
   React.useEffect(getInitialLocation, [])
 
@@ -51,8 +52,9 @@ function App() {
   }
   React.useEffect(findZip, [currentLocation])
 
-  const handleMove = ({viewState}: { viewState: ViewState }): void => {
+  const handleMove = ({viewState}: { viewState: IViewState }): void => {
     const { latitude, longitude } = viewState
+    setViewState(viewState)
     Geo.searchByCoordinates([longitude, latitude], {maxResults: 1}).then(setCurrentLocation)
   }
 
@@ -67,7 +69,7 @@ function App() {
               <h5>{currentLocation.label}</h5>
             </>
           )}
-          <div style={{ display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row', zIndex: 1, position: 'fixed', bottom: 0, left: 0 }}>
             <div style={{ margin: 10 }}>
               {incomeData && <p>Average Household Income {currency(incomeData)}</p>}
               {homeData && <p>Average Home Value {currency(homeData.Value)}</p>}
@@ -96,13 +98,14 @@ function App() {
               )}
             </div>
           </div>
-          {initialViewState && 
+          {viewState && 
             <MapView
               reuseMaps={true}
-              initialViewState={initialViewState}
+              initialViewState={viewState}
               maxZoom={13}
               onMoveEnd={handleMove}
             >
+              <Marker latitude={viewState.latitude} longitude={viewState.longitude} />
               <LocationSearch />
             </MapView>
           }
