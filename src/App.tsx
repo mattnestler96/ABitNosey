@@ -6,6 +6,11 @@ import awsconfig from './aws-exports';
 import { Authenticator, MapView, LocationSearch } from "@aws-amplify/ui-react";
 import '@aws-amplify/ui-react/styles.css';
 import { ViewState } from 'react-map-gl';
+import { Doughnut } from 'react-chartjs-2'
+import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js'
+import { omit } from 'lodash'
+
+ChartJS.register(ArcElement, Tooltip)
 Amplify.configure(awsconfig);
 
 const currency = (value: number | string): string => {
@@ -71,9 +76,22 @@ function App() {
             <div style={{ margin: 10 }}>
               {demoData && (
                 <>
-                  {Object.entries(demoData).map(([key, value]) => (
-                    <p>{`${key} - ${value}`}</p>
-                  ))}
+                  <p>Total Population {demoData.totalPopulation.toLocaleString()}</p>
+                  <Doughnut
+                    options={{
+                      plugins: {
+                        legend: {
+                          display: false
+                        }
+                      }
+                    }}
+                    data={{
+                      labels: Object.keys(omit(demoData, ['totalPopulation', 'nonHispanicTotalPopulation', 'hispanicTotalPopulation'])),
+                      datasets: [{
+                        data: Object.values(omit(demoData, ['totalPopulation', 'nonHispanicTotalPopulation', 'hispanicTotalPopulation'])),
+                      }]
+                    }}
+                  />
                 </>
               )}
             </div>

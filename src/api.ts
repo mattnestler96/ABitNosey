@@ -16,9 +16,9 @@ export type ZillowResponse = {
 }
 
 export const findIncomeByZip = async (zip: string): Promise<any> => {
-    const {data} = await axios.get(`https://api.census.gov/data/2020/acs/acs5?get=NAME,group(B19013)&for=zip%20code%20tabulation%20area:${zip}&key=${CENSUS_KEY}`)
+    const {data} = await axios.get(`https://api.census.gov/data/2020/acs/acs5?get=B19013_001E&for=zip%20code%20tabulation%20area:${zip}&key=${CENSUS_KEY}`)
     const [rawKeys, rawData] = data
-    return rawData[rawKeys.findIndex((d: string) => d === 'B19013_001E')]
+    return rawData[0]
 }
 
 const demoDataKeys: Record<string, string> = {
