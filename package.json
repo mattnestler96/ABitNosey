@@ -37,7 +37,7 @@
   },
   "browserslist": {
     "production": [
-      "defaults", 
+      "defaults",
       "not ie 11"
     ],
     "development": [

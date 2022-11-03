@@ -2,8 +2,7 @@ import axios from "axios"
 import { API } from 'aws-amplify';
 import * as queries from './graphql/queries';
 
-const CENSUS_KEY = '727424fca32c84b8882d75dedbe61c6d0f9df1bf'
-// const ZILLOW_KEY = 'UdSgy4dpzQx2AHX1RJjybYIxbN38FAbm6ThvZRQG'
+const CENSUS_KEY = process.env.REACT_APP_CENSUS_KEY
 
 export type ZillowResponse = {
     RegionName: string;
