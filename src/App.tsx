@@ -1,14 +1,15 @@
 import React from 'react';
 import { findIncomeByZip, findHomeValueByZip, findRentValueByZip, findDemoDataByZip, ZillowResponse } from './api'
 import { Amplify, Geo } from 'aws-amplify';
-import { Place } from '@aws-amplify/geo'
+import { Place } from '@aws-amplify/geo';
 import awsconfig from './aws-exports';
 import { Authenticator, MapView, LocationSearch } from "@aws-amplify/ui-react";
 import '@aws-amplify/ui-react/styles.css';
-import { ViewState, Marker } from 'react-map-gl';
+import { ViewState } from 'react-map-gl';
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js'
 import { omit } from 'lodash'
+import MarkerWithPlace from './components/MarkerWithLabel';
 
 ChartJS.register(ArcElement, Tooltip)
 Amplify.configure(awsconfig);
@@ -21,11 +22,11 @@ const currency = (value: number | string): string => {
   return `$${(Math.round((num as number) * 100) / 100).toLocaleString()}`
 }
 
-type IViewState = Pick<ViewState, 'latitude' | 'longitude'>
+type IViewState = Pick<ViewState, 'latitude' | 'longitude' | 'zoom'>
 
 function App() {
 
-  const [viewState, setViewState] = React.useState<IViewState>({ latitude: 32.7, longitude: -117.1 })
+  const [viewState, setViewState] = React.useState<IViewState>({ latitude: 32.71, longitude: -117.16, zoom: 12 })
   const getInitialLocation = () => {
     navigator.geolocation.getCurrentPosition(function(position) {
       const {latitude, longitude} = position.coords
@@ -61,21 +62,13 @@ function App() {
   return (
     <Authenticator>
       <div className="App">
-        <header className="App-header">
-          {currentLocation && (
-            <>
-              <h1>{currentLocation.neighborhood} {currentLocation.municipality}</h1>
-              <h2>{currentLocation.postalCode}</h2>
-              <h5>{currentLocation.label}</h5>
-            </>
-          )}
           <div style={{ display: 'flex', flexDirection: 'row', zIndex: 1, position: 'fixed', bottom: 0, left: 0 }}>
             <div style={{ margin: 10 }}>
               {incomeData && <p>Average Household Income {currency(incomeData)}</p>}
               {homeData && <p>Average Home Value {currency(homeData.Value)}</p>}
               {rentData && <p>Average Rent {currency(rentData.Value)}</p>}
             </div>
-            <div style={{ margin: 10 }}>
+            <div style={{ margin: 10, width: 100 }}>
               {demoData && (
                 <>
                   <p>Total Population {demoData.totalPopulation.toLocaleString()}</p>
@@ -105,11 +98,16 @@ function App() {
               maxZoom={13}
               onMoveEnd={handleMove}
             >
-              <Marker latitude={viewState.latitude} longitude={viewState.longitude} />
+              {currentLocation && 
+                <MarkerWithPlace
+                  {...currentLocation}
+                  latitude={viewState.latitude}
+                  longitude={viewState.longitude}
+                />
+              }
               <LocationSearch />
             </MapView>
           }
-        </header>
       </div>
     </Authenticator>
   );
